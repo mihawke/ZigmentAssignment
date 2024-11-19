@@ -27,7 +27,7 @@ const FormGenerator: React.FC<FormGeneratorProps> = ({ formData, isValid }) => {
     alert('Form submitted successfully!')
     console.log('Form submitted with data:', formObject);
     let downloadPrompt = confirm('Download JSON data?')
-    if (downloadPrompt != null) { downloadJSON(formObject); }
+    if (downloadPrompt != false) { downloadJSON(formObject); }
   };
 
   //check is formData is empty
