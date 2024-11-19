@@ -15,7 +15,7 @@ export const ThemeContext = createContext<ThemeContextProps | undefined>(undefin
 
 function App() {
 
-  const [theme, setTheme] = useState<Theme>('dark');//useState hook to set app theme
+  const [theme, setTheme] = useState<Theme>('light');//useState hook to set app theme
   const [validJson, setValidJson] = useState<Form | null>(null);//useState hook to set JSON data
   const [isValid, setIsValid] = useState<boolean>(true);//useState hook to set JSON data
 
