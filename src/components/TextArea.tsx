@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Field } from "./types";
+import { Field } from "../utils/types";
 import { ThemeContext } from "../App";
 
 interface TextAreaProps {
@@ -11,7 +11,7 @@ const TextArea: React.FC<TextAreaProps> = ({ field }) => {
   const { theme } = useContext(ThemeContext) ?? { theme: 'light' };
 
     return (
-        <div className='flex flex-col w-full mb-2.5'>
+        <div className='flex flex-col w-full mb-2.5' id="textarea-container">
             <label 
             htmlFor={field.id}
             className={`text-sm leading-5 font-medium mb-0.5 ${theme == 'light' ? 'text-[#2E2E2E]' : 'text-gray-200'}`}

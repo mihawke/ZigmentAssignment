@@ -2,7 +2,7 @@ import './App.css'
 import JsonEditor from './components/JsonEditor'
 import FormGenerator from './components/FormGenerator'
 import { createContext, useState } from 'react'
-import { Form } from './components/types'
+import { Form } from './utils/types'
 
 type Theme = 'light' | 'dark';
 
@@ -15,8 +15,9 @@ export const ThemeContext = createContext<ThemeContextProps | undefined>(undefin
 
 function App() {
 
-  const [loadedJson, setLoadedJson] = useState<Form | null>(null);//useState hook to set JSON data
-  const [theme, setTheme] = useState<Theme>('light');//useState hook to set app theme
+  const [theme, setTheme] = useState<Theme>('dark');//useState hook to set app theme
+  const [validJson, setValidJson] = useState<Form | null>(null);//useState hook to set JSON data
+  const [isValid, setIsValid] = useState<boolean>(true);//useState hook to set JSON data
 
   return (
     <ThemeContext.Provider value={{ theme }}>
@@ -30,8 +31,8 @@ function App() {
         </button>
 
         <div className='flex flex-col lg:flex-row w-full h-full'>
-          <JsonEditor setLoadedJson={setLoadedJson} loadedJson={loadedJson} />
-          <FormGenerator formData={loadedJson} />
+          <JsonEditor setValidJson={setValidJson} setIsValid={setIsValid}/>
+          <FormGenerator formData={validJson} isValid={isValid}/>
         </div>
       </div>
     </ThemeContext.Provider >

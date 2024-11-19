@@ -22,5 +22,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src", "jest_tests/checkUniqueId.test.ts", "jest_tests/validateInput.test.ts", "jest_tests/validateJson.test.ts"]
 }

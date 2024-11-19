@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Form } from './types';
+import { Form } from '../utils/types';
 import { ThemeContext } from '../App';
 import sample1 from '../data/sample1.json'
 import sample2 from '../data/sample2.json'
@@ -9,19 +9,19 @@ import sample5 from '../data/sample5.json'
 import { validateJson } from '../utils/validateJson';
 
 interface JsonEditorProps {
-  loadedJson: Form | null;
-  setLoadedJson: React.Dispatch<React.SetStateAction<Form | null>>;
+  setValidJson: React.Dispatch<React.SetStateAction<Form | null>>;
+  setIsValid: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const JsonEditor: React.FC<JsonEditorProps> = ({ loadedJson, setLoadedJson }) => {
+const JsonEditor: React.FC<JsonEditorProps> = ({ setValidJson, setIsValid }) => {
 
   const { theme } = useContext(ThemeContext) ?? { theme: 'light' };
 
-  // Initialize the editor with the JSON data
-  const [jsonString, setJsonString] = useState(JSON.stringify(loadedJson, null, 2));
-  const [error, setError] = useState<string | null>(null);//Initialize the error state 
-  const [file, setFile] = useState<File | null>(null);//Initialize the error state 
+  const [jsonString, setJsonString] = useState(JSON.stringify(null));
+  const [error, setError] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [activeBtn, setactiveBtn] = useState<string>('');
 
   // Handle file upload and update the state
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +33,6 @@ const JsonEditor: React.FC<JsonEditorProps> = ({ loadedJson, setLoadedJson }) =>
 
   //update EditorJson states
   const updateEditorJson = (json: any) => {
-    setLoadedJson(json)
     setJsonString(JSON.stringify(json, null, 2))
   }
 
@@ -65,28 +64,34 @@ const JsonEditor: React.FC<JsonEditorProps> = ({ loadedJson, setLoadedJson }) =>
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newJsonString = e.target.value;
     setJsonString(newJsonString);
-    const parsedData = validateJson(newJsonString, setError);
-    if (parsedData) {
-      updateEditorJson(parsedData)
-    }
   };
 
   useEffect(() => {
-    validateJson(jsonString, setError)
+    const result = validateJson(jsonString, setError);
+    if (result?.isValid) {
+      setIsValid(true)
+      setValidJson(result.data)
+    }
+    else {
+      setIsValid(false)
+      setValidJson(null)
+    }
   }, [jsonString])
 
 
   return (
-    <div className={`flex flex-col items-center w-full lg:h-full px-6 py-6 md:py-10 lg:py-10  ${theme == 'light' ? 'text-[#2E2E2E] bg-white' : 'text-[#F5F5F5] bg-gray-950'}`}>
+    <div
+      id='jsoneditor-container'
+      className={`flex flex-col items-center w-full lg:h-full px-6 py-6 md:py-10 lg:py-10  ${theme == 'light' ? 'text-[#2E2E2E] bg-white' : 'text-[#F5F5F5] bg-gray-950'}`}>
       <h1 className='text-2xl md:text-3xl lg:text-5xl leading-5 font-bold mb-4'>JSON Editor</h1>
       <div className='flex flex-col text-center md:flex-row mb-4'>
         <p className='font-bold text-base lg:text-2xl mr-2'>Sample Json:</p>
         <nav className='flex flex-row gap-2 items-center justify-center'>
-          <button onClick={() => updateEditorJson(sample1)} className='text-xs md:text-base px-2 py-1 bg-green-600 text-white rounded-md'>sample 1</button>
-          <button onClick={() => updateEditorJson(sample2)} className='text-xs md:text-base px-2 py-1 bg-green-600 text-white rounded-md'>sample 2</button>
-          <button onClick={() => updateEditorJson(sample3)} className='text-xs md:text-base px-2 py-1 bg-green-600 text-white rounded-md'>sample 3</button>
-          <button onClick={() => updateEditorJson(sample4)} className='text-xs md:text-base px-2 py-1 bg-green-600 text-white rounded-md'>sample 4</button>
-          <button onClick={() => updateEditorJson(sample5)} className='text-xs md:text-base px-2 py-1 bg-green-600 text-white rounded-md'>sample 5</button>
+          <button onClick={() => { updateEditorJson(sample1), setactiveBtn('1') }} className={`text-xs md:text-base px-2 py-1 bg-green-600 text-white rounded-md border-[2px] border-transparent ${activeBtn == '1' ? 'border-green-950' : ''}`}>sample 1</button>
+          <button onClick={() => { updateEditorJson(sample2), setactiveBtn('2') }} className={`text-xs md:text-base px-2 py-1 bg-green-600 text-white rounded-md border-[2px] border-transparent ${activeBtn == '2' ? 'border-green-950' : ''}`}>sample 2</button>
+          <button onClick={() => { updateEditorJson(sample3), setactiveBtn('3') }} className={`text-xs md:text-base px-2 py-1 bg-green-600 text-white rounded-md border-[2px] border-transparent ${activeBtn == '3' ? 'border-green-950' : ''}`}>sample 3</button>
+          <button onClick={() => { updateEditorJson(sample4), setactiveBtn('4') }} className={`text-xs md:text-base px-2 py-1 bg-green-600 text-white rounded-md border-[2px] border-transparent ${activeBtn == '4' ? 'border-green-950' : ''}`}>sample 4</button>
+          <button onClick={() => { updateEditorJson(sample5), setactiveBtn('5') }} className={`text-xs md:text-base px-2 py-1 bg-green-600 text-white rounded-md border-[2px] border-transparent ${activeBtn == '5' ? 'border-green-950' : ''}`}>Clear</button>
         </nav>
       </div>
       <textarea
@@ -103,7 +108,7 @@ const JsonEditor: React.FC<JsonEditorProps> = ({ loadedJson, setLoadedJson }) =>
 
       <form className='flex flex-col items-center md:flex-row mt-4' onSubmit={handleFileUpload}>
         <input type="file" accept=".json" ref={fileInputRef} onChange={handleFileChange} className='border-2 rounded-md place-content-center border-gray-700' />
-        <button type='submit' className='w-fit bg-[#7F56D9] text-white text-sm md:text-base px-2 md:px-4 py-1.5 rounded-md'>Copy from JSON</button>
+        <button type='submit' className={`w-fit bg-[#7F56D9] text-white text-sm md:text-base px-2 md:px-4 py-1.5 rounded-md disabled:opacity-50`} disabled={file ? false : true}>Copy from JSON</button>
       </form>
     </div>
   );

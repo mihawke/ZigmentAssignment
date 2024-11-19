@@ -1,6 +1,12 @@
 export default {
   preset: 'ts-jest',
   testEnvironment: 'jest-environment-jsdom',
+  testMatch: [
+    "<rootDir>/src/**/*.test.ts",
+    "<rootDir>/jest_tests/**/*.test.ts",
+    "<rootDir>/src/**/*.test.ts",
+    "<rootDir>/jest_tests/**/*.test.tsx",  // Customize for Jest test files
+  ],
   transform: {
       "^.+\\.tsx?$": "ts-jest" 
   // process `*.tsx` files with `ts-jest`
