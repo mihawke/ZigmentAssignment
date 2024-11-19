@@ -13,6 +13,7 @@ To get started with this project, follow the steps below.
 - Vite
 - Jest
 - Playwright
+- Tailwind CSS
 
 ## Installation
 
